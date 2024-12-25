@@ -95,7 +95,7 @@ public class ServletPathMapper extends LookupCommand implements Command {
         // Look up the servlet path for this request
         ServletWebContext swcontext = (ServletWebContext) context;
         HttpServletRequest request = swcontext.getRequest();
-        String servletPath = (String) request.getAttribute("javax.servlet.include.servlet_path");
+        String servletPath = (String) request.getAttribute("jarkatra.servlet.include.servlet_path");
         if (servletPath == null) {
             servletPath = request.getServletPath();
         }

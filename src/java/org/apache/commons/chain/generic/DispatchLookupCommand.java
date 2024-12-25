@@ -16,7 +16,6 @@
  */
 package org.apache.commons.chain.generic;
 
-
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -25,27 +24,35 @@ import java.lang.reflect.Method;
 import java.util.WeakHashMap;
 
 /**
- * <p>This command combines elements of the {@link LookupCommand} with the
- * {@link DispatchCommand}.  Look up a specified {@link Command} (which could
+ * <p>
+ * This command combines elements of the {@link LookupCommand} with the
+ * {@link DispatchCommand}. Look up a specified {@link Command} (which could
  * also be a {@link org.apache.commons.chain.Chain}) in a
  * {@link org.apache.commons.chain.Catalog}, and delegate execution to
- * it.  Introspection is used to lookup the appropriate method to delegate
- * execution to.  If the delegated-to {@link Command} is also a
+ * it. Introspection is used to lookup the appropriate method to delegate
+ * execution to. If the delegated-to {@link Command} is also a
  * {@link Filter}, its <code>postprocess()</code> method will also be invoked
- * at the appropriate time.</p>
+ * at the appropriate time.
+ * </p>
  *
- * <p>The name of the {@link Command} can be specified either directly (via
+ * <p>
+ * The name of the {@link Command} can be specified either directly (via
  * the <code>name</code> property) or indirectly (via the <code>nameKey</code>
- * property).  Exactly one of these must be set.</p>
+ * property). Exactly one of these must be set.
+ * </p>
  *
- * <p>The name of the method to be called can be specified either directly
+ * <p>
+ * The name of the method to be called can be specified either directly
  * (via the <code>method</code> property) or indirectly (via the <code>
- * methodKey</code> property).  Exactly one of these must be set.</p>
+ * methodKey</code> property). Exactly one of these must be set.
+ * </p>
  *
- * <p>If the <code>optional</code> property is set to <code>true</code>,
+ * <p>
+ * If the <code>optional</code> property is set to <code>true</code>,
  * failure to find the specified command in the specified catalog will be
- * silently ignored.  Otherwise, a lookup failure will trigger an
- * <code>IllegalArgumentException</code>.</p>
+ * silently ignored. Otherwise, a lookup failure will trigger an
+ * <code>IllegalArgumentException</code>.
+ * </p>
  *
  * @author Sean Schofield
  * @version $Revision$
@@ -58,14 +65,19 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
 
     /**
      * Create an instance with an unspecified <code>catalogFactory</code> property.
-     * This property can be set later using <code>setProperty</code>, or if it is not set,
-     * the static singleton instance from <code>CatalogFactory.getInstance()</code> will be used.
+     * This property can be set later using <code>setProperty</code>, or if it is
+     * not set,
+     * the static singleton instance from <code>CatalogFactory.getInstance()</code>
+     * will be used.
      */
-    public DispatchLookupCommand() {  super();  };
+    public DispatchLookupCommand() {
+        super();
+    };
 
     /**
      * Create an instance and initialize the <code>catalogFactory</code> property
      * to given <code>factory</code>.
+     * 
      * @param factory The Catalog Factory.
      */
     public DispatchLookupCommand(CatalogFactory factory) {
@@ -78,14 +90,11 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
      * The base implementation expects dispatch methods to take a <code>
      * Context</code> as their only argument.
      */
-    private static final Class[] DEFAULT_SIGNATURE =
-        new Class[] {Context.class};
-
+    private static final Class[] DEFAULT_SIGNATURE = new Class[] { Context.class };
 
     // ----------------------------------------------------- Instance Variables
 
     private WeakHashMap methods = new WeakHashMap();
-
 
     // ------------------------------------------------------------- Properties
 
@@ -94,6 +103,7 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
 
     /**
      * Return the method name.
+     * 
      * @return The method name.
      */
     public String getMethod() {
@@ -102,6 +112,7 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
 
     /**
      * Return the Context key for the method name.
+     * 
      * @return The Context key for the method name.
      */
     public String getMethodKey() {
@@ -110,6 +121,7 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
 
     /**
      * Set the method name.
+     * 
      * @param method The method name.
      */
     public void setMethod(String method) {
@@ -118,31 +130,32 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
 
     /**
      * Set the Context key for the method name.
+     * 
      * @param methodKey The Context key for the method name.
      */
     public void setMethodKey(String methodKey) {
         this.methodKey = methodKey;
     }
 
-
     // --------------------------------------------------------- Public Methods
 
     /**
-     * <p>Look up the specified command, and (if found) execute it.</p>
+     * <p>
+     * Look up the specified command, and (if found) execute it.
+     * </p>
      *
      * @param context The context for this request
      * @return the result of executing the looked-up command's method, or
-     * <code>false</code> if no command is found.
+     *         <code>false</code> if no command is found.
      *
      * @throws Exception if no such {@link Command} can be found and the
-     *  <code>optional</code> property is set to <code>false</code>
+     *                   <code>optional</code> property is set to <code>false</code>
      */
     public boolean execute(Context context) throws Exception {
 
         if (this.getMethod() == null && this.getMethodKey() == null) {
             throw new IllegalStateException(
-                "Neither 'method' nor 'methodKey' properties are defined "
-            );
+                    "Neither 'method' nor 'methodKey' properties are defined ");
         }
 
         Command command = getCommand(context);
@@ -150,7 +163,7 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
         if (command != null) {
             Method methodObject = extractMethod(command, context);
             Object obj = methodObject.invoke(command, getArguments(context));
-            Boolean result = (Boolean)obj;
+            Boolean result = (Boolean) obj;
 
             return (result != null && result.booleanValue());
         } else {
@@ -159,14 +172,15 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
 
     }
 
-
     // ------------------------------------------------------ Protected Methods
 
     /**
-     * <p>Return a <code>Class[]</code> describing the expected signature of
-     * the method.  The default is a signature that just accepts the command's
-     * {@link Context}.  The method can be overidden to provide a different
-     * method signature.<p>
+     * <p>
+     * Return a <code>Class[]</code> describing the expected signature of
+     * the method. The default is a signature that just accepts the command's
+     * {@link Context}. The method can be overidden to provide a different
+     * method signature.
+     * </p>
      *
      * @return the expected method signature
      */
@@ -178,7 +192,7 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
      * Get the arguments to be passed into the dispatch method.
      * Default implementation simply returns the context which was passed in,
      * but subclasses could use this to wrap the context in some other type,
-     * or extract key values from the context to pass in.  The length and types
+     * or extract key values from the context to pass in. The length and types
      * of values returned by this must coordinate with the return value of
      * <code>getSignature()</code>
      *
@@ -186,30 +200,28 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
      * @return the method arguments to be used
      */
     protected Object[] getArguments(Context context) {
-        return new Object[] {context};
+        return new Object[] { context };
     }
-
 
     // -------------------------------------------------------- Private Methods
 
-
     /**
-     * Extract the dispatch method.  The base implementation uses the
+     * Extract the dispatch method. The base implementation uses the
      * command's <code>method</code> property at the name of a method
      * to look up, or, if that is not defined, uses the <code>
      * methodKey</code> to lookup the method name in the context.
      *
      * @param command The commmand that contains the method to be
-     *    executed.
+     *                executed.
      * @param context The context associated with this request
      * @return the dispatch method
      *
      * @throws NoSuchMethodException if no method can be found under the
-     *    specified name.
-     * @throws NullPointerException if no methodName can be determined
+     *                               specified name.
+     * @throws NullPointerException  if no methodName can be determined
      */
     private Method extractMethod(Command command, Context context)
-        throws NoSuchMethodException {
+            throws NoSuchMethodException {
 
         String methodName = this.getMethod();
 
@@ -217,11 +229,10 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
             Object methodContextObj = context.get(getMethodKey());
             if (methodContextObj == null) {
                 throw new NullPointerException("No value found in context under " +
-                                               getMethodKey());
+                        getMethodKey());
             }
             methodName = methodContextObj.toString();
         }
-
 
         Method theMethod = null;
 
@@ -230,7 +241,7 @@ public class DispatchLookupCommand extends LookupCommand implements Filter {
 
             if (theMethod == null) {
                 theMethod = command.getClass().getMethod(methodName,
-                                                         getSignature());
+                        getSignature());
                 methods.put(methodName, theMethod);
             }
         }

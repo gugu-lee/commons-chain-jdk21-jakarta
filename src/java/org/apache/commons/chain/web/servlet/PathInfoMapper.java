@@ -95,7 +95,7 @@ public class PathInfoMapper extends LookupCommand implements Command {
         // Look up the extra path information for this request
         ServletWebContext swcontext = (ServletWebContext) context;
         HttpServletRequest request = swcontext.getRequest();
-        String pathInfo = (String) request.getAttribute("javax.servlet.include.path_info");
+        String pathInfo = (String) request.getAttribute("jarkatra.servlet.include.path_info");
         if (pathInfo == null) {
             pathInfo = request.getPathInfo();
         }

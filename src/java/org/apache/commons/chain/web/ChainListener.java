@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * specified servlet context attribute. The following <em>context</em> init
  * parameters are utilized:
  * </p>
+ * 
  * <ul>
  * <li><strong>org.apache.commons.chain.CONFIG_CLASS_RESOURCE</strong> -
  * comma-delimited list of chain configuration resources to be loaded
@@ -58,7 +59,7 @@ import org.apache.commons.logging.LogFactory;
  * the {@link CatalogFactory} for this application, and no
  * servet context attribute will be created.
  * <strong>NOTE</strong> - This parameter is deprecated.
- * </p>
+ * 
  * <li><strong>org.apache.commons.chain.RULE_SET</strong> -
  * Fully qualified class name of a Digester <code>RuleSet</code>
  * implementation to use for parsing configuration resources (this
